@@ -1,15 +1,16 @@
 from configparser import ConfigParser
 import google.generativeai as genai
 from google.generativeai import GenerationConfig
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv('GOOGLE_API_KEY')
 
 MAX_INTRO_LENGTH = 200
 MAX_SENTENCE_LENGTH = 100
 
 try:
-    config = ConfigParser()
-    config.read('credentials.ini')
-    api_key = config['API_KEY']['google_api_key']
-
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
