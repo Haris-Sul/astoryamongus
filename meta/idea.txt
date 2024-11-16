@@ -1,0 +1,9 @@
+Scenario:
+
+Initial prompt, AI generated with user keywords. x user, x - 1 player and one AI. Each round, user types sentence to progress story. After 2 rounds, all users vote out one player.
+
+If AI storyteller is voted out, game ends positively, relative to how many people survive.
+
+If AI is not voted out, a system AI story setence is generated, making the story darker.
+
+Players lose when one player is left is left with the AI and players win when AI is voted out.
