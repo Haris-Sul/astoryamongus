@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
 # Sample data
 story_prompt = "Once upon a time..."
@@ -18,6 +21,9 @@ def create_room():
     # Logic to create a room
     return redirect(url_for("home"))
 
+@app.route("/game_room/<string:room_id>")
+def room(room_id):
+    return render_template("game_room.html", room_id=room_id)
 
 @app.route("/join_room", methods=["POST"])
 def join_room():
@@ -41,4 +47,4 @@ def submit_vote():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app)
