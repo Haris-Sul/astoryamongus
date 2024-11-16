@@ -1,38 +1,31 @@
-{% extends 'base.html' %}
-
-{% block head %}
-
-{% endblock %}
-
-{% block body %}
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
 <header>
-  <h1>A Story Among Us</h1>
+    <h1>A Story Among Us</h1>
 </header>
 <main>
-  <section id="room-section">
-      <h2>Create or Join a Room</h2>
-      <form action="{{ url_for('create_room') }}" method="post">
-          <input
-              type="text"
-              name="room_name"
-              id="room_name"
-              placeholder="Room Name"
-              required
-          />
-          <button type="submit">Create Room</button>
-      </form>
-      <form action="{{ url_for('join_room') }}" method="post">
-          <input
-              type="text"
-              name="room_name"
-              id="join_room_name"
-              placeholder="Room Name"
-              required
-          />
-          <button type="submit">Join Room</button>
-      </form>
-  </section>
+    <h2>Create or Join a Room</h2>
+    <form method="post">
+        <input
+            type="text"
+            placeholder="Type room name here..."
+            name="room_name"
+            value="{{room_name}}"
+        />
+        <button type="submit" name="create">Create Room</button>
+        <input
+            type="text"
+            placeholder="Type room ID here..."
+            name="room_id"
+            value="{{room_id}}"
+        />
+        <button type="submit" name="join">Join Room</button>
+    </form>
 </main>
+{% if error %}
+    <ul>
+        <li>{{error}}</li>
+    </ul>
+{% endif %}
 <footer>
   <p>&copy; 2024 HackSheffield 9</p>
 </footer>

@@ -1,4 +1,4 @@
-% extends 'base.html' %}
+{% extends 'base.html' %}
 
 {% block head %}
 
@@ -6,13 +6,13 @@
 
 {% block body %}
 
-<section id="prompt-section">
+<!-- <section id="prompt-section">
   <h2>Current Story Prompt</h2>
   <p id="story-prompt">{{ story_prompt }}</p>
 </section>
 <section id="input-section">
   <h2>Continue the Story</h2>
-  <form action="{{ url_for('submit_sentence') }}" method="post">
+  <form method="post">
       <textarea
           name="user_sentence"
           id="user_sentence"
@@ -25,7 +25,7 @@
 </section>
 <section id="vote-section">
   <h2>Vote Out a Player</h2>
-  <form action="{{ url_for('submit_vote') }}" method="post">
+  <form method="post">
       <label for="player_vote"
           >Choose a player to vote out:</label
       >
@@ -36,6 +36,6 @@
       </select>
       <button type="submit">Vote</button>
   </form>
-</section>
+</section> -->
 
 {% endblock %}
