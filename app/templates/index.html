@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<header>
+  <h1>Story Among Us</h1>
+</header>
+<main>
+  <section id="room-section">
+      <h2>Create or Join a Room</h2>
+      <form action="{{ url_for('create_room') }}" method="post">
+          <input
+              type="text"
+              name="room_name"
+              id="room_name"
+              placeholder="Room Name"
+              required
+          />
+          <button type="submit">Create Room</button>
+      </form>
+      <form action="{{ url_for('join_room') }}" method="post">
+          <input
+              type="text"
+              name="room_name"
+              id="join_room_name"
+              placeholder="Room Name"
+              required
+          />
+          <button type="submit">Join Room</button>
+      </form>
+  </section>
+  <section id="prompt-section">
+      <h2>Current Story Prompt</h2>
+      <p id="story-prompt">{{ story_prompt }}</p>
+  </section>
+  <section id="input-section">
+      <h2>Continue the Story</h2>
+      <form action="{{ url_for('submit_sentence') }}" method="post">
+          <textarea
+              name="user_sentence"
+              id="user_sentence"
+              rows="4"
+              placeholder="Type your sentence here..."
+              required
+          ></textarea>
+          <button type="submit">Submit</button>
+      </form>
+  </section>
+  <section id="vote-section">
+      <h2>Vote Out a Player</h2>
+      <form action="{{ url_for('submit_vote') }}" method="post">
+          <label for="player_vote"
+              >Choose a player to vote out:</label
+          >
+          <select name="player_vote" id="player_vote" required>
+              {% for player in players %}
+              <option value="{{ player }}">{{ player }}</option>
+              {% endfor %}
+          </select>
+          <button type="submit">Vote</button>
+      </form>
+  </section>
+</main>
+<footer>
+  <p>&copy; 2023 HackSheffield 9</p>
+</footer>
+{% endblock %}

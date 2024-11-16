@@ -8,8 +8,8 @@ players = ["Alice", "Bob", "Charlie"]
 
 
 @app.route("/")
-def home():
-    return render_template("base.html", story_prompt=story_prompt, players=players)
+def index():
+    return render_template("index.html", story_prompt=story_prompt, players=players)
 
 
 @app.route("/create_room", methods=["POST"])
@@ -41,4 +41,4 @@ def submit_vote():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
