@@ -23,5 +23,5 @@ env/
 # Windows
 Thumbs.db
 ehthumbs.db
-Desktop.ini
+*.ini
 $RECYCLE.BIN/
