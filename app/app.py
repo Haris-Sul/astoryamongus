@@ -12,11 +12,12 @@ rooms = {}
 
 def generate_unique_room_id(length):
     characters = string.ascii_letters + string.digits
-    for _ in range(length):
-        secure_random_string = ''.join(secrets.choice(characters))
-    
-    return secure_random_string
+    while True:
+        random_string = ''.join(secrets.choice(characters) for _ in range(length))
         
+        if random_string not in rooms:
+            return random_string
+
 @app.route("/", methods=["POST", "GET"])
 def index():
     session.clear()
@@ -53,7 +54,21 @@ def room():
     room = session.get("room")
     if room is None or session.get("user_name") is None or room not in rooms:
         return redirect(url_for("index"))
-    return render_template("room.html")
+    return render_template("room.html", room_id=room)
+
+@socketio.on("message")
+def message(data):
+    room = session.get("room")
+    if room not in rooms:
+        return
+    
+    content = {
+        "name": session.get("user_name"),
+        "message": data["data"]
+    }
+    send(content, to=room)
+    rooms[room]["messages"].append(content)
+    print(f"{session.get('user_name')} said: {data['data']}")
 
 @socketio.on("connect")
 def connect(auth):
