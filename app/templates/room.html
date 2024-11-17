@@ -4,17 +4,17 @@
 <section id="game-box">
     <!-- Initial prompt goes in this h1 tag -->
     <h1></h1>
-    <h2>Room Code: {{room_id}}</h2>
     
-    <div class="messages-container"></div>
+    <div class="messages-container" id="messages-container"></div>
     <div>
         <input type="text" rows="3" placeholder="Message" name="message" id="message"/>
         <button type="button" name="send" id="send-button" onClick="sendMessage()">Send</button>
     </div>
 </section>
 <!-- List of user names on the side of the page -->
-<aside class="user-list">
-
+<aside>
+    <h1>Room Code:</h1>
+    <h1>{{room_id}}</h1>
 </aside>
 <script type="text/javascript">
     var socket_io = io();
@@ -36,8 +36,11 @@
         createMessage(data.name, data.message);
     });
 
-    const sendSentence = () => {
-        console.log("Send");
+    const sendMessage = () => {
+        const message = document.getElementById("message");
+        if (message.value == "") return;
+        socket_io.emit("message", { data: message.value });
+        message.value = "";
     };
 </script>
 {% endblock %}
