@@ -54,7 +54,7 @@ def room():
     room = session.get("room")
     if room is None or session.get("user_name") is None or room not in rooms:
         return redirect(url_for("index"))
-    return render_template("room.html", room_id=room)
+    return render_template("room.html", room_id=room, messages=rooms[room]["messages"])
 
 @socketio.on("message")
 def message(data):
