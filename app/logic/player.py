@@ -5,7 +5,10 @@ class Player:
         self.alive = True
 
     def eliminate(self):
+        """Eliminate the player."""
         self.alive = False
 
     def is_active(self):
+        """Check if the player is still active."""
         return self.alive
+
