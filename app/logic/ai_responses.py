@@ -49,6 +49,7 @@ def generate_sentence(story_so_far, max_sentence_length=100):
     return response.text
 
 
+
 # Example usage:
 
 # keywords = ["penguins", "space", "adventure", "mystery"]
