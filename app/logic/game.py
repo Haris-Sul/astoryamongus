@@ -2,6 +2,8 @@ import random
 from player import Player
 from story import Story
 from voting import Voting
+import sys
+sys.path.append('/server/gemini.py')
 
 class Game:
     def __init__(self, num_players):
