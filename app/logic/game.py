@@ -3,7 +3,7 @@ from player import Player
 from story import Story
 import getpass
 from ai_responses import generate_intro, generate_sentence
-
+import random
 
 
 class Game:
@@ -15,6 +15,12 @@ class Game:
         self.keywords = {}
         self.rounds = 0
         self.game_over = False
+
+    # method to return player from name
+    def get_player(self, name):
+        for player in self.players:
+            if player.name == name:
+                return player
 
     def collect_keywords(self):
         """Collect keywords from players."""
@@ -67,28 +73,68 @@ class Game:
 
     def start_voting(self):
         """Conduct voting."""
-        votes = {}
+        votes = []
         active_players = [player for player in self.players if player.is_active()]
+
+        # Collect votes from all human players
         for voter in active_players:
             options = [p.name for p in active_players if p.name != voter.name]
-            vote = input(f"{voter.name}, vote to eliminate: {', '.join(options)}: ")
-            votes[vote] = votes.get(vote, 0) + 1
+
+            if voter.is_ai == False:
+                vote = None
+                while vote not in options:
+                    vote = input(f"{voter.name}, vote to eliminate: {', '.join(options)} > ")
+                    if vote not in options:
+                        print(f"Invalid vote. Please try again.")
+                    
+                votes.append(vote)
+
+        
+        # Determine the non-ai player with the most votes
+        if len(votes) < 2:
+            votes += [active_players[0].name]
+        else:
+            non_ai_votes = [vote for vote in votes if not self.get_player(vote).is_ai]
+            max_non_ai_votes = self.players_with_max_votes(non_ai_votes)
+            if len(max_non_ai_votes) == 1:
+                # add ai vote for player with most votes
+                votes += [max_non_ai_votes[0]]
+            else:
+                # add ai vote for random player with most votes
+                votes += [random.choice(max_non_ai_votes)]
+        
+        print("TEST: " + ", ".join(votes))
+        print(self.ai.name + " votes to eliminate: " + votes[-1])
 
         # Determine the player with the most votes
-        max_votes = max(votes.values())
-        voted_out_candidates = [name for name, count in votes.items() if count == max_votes]
-
-        if len(voted_out_candidates) > 1:
-            print(f"Tie detected between: {', '.join(voted_out_candidates)}. Resolving randomly...")
-            voted_out = random.choice(voted_out_candidates)
+        max_votes = self.players_with_max_votes(votes)
+        if len(max_votes) == 1:
+            eliminated_player = self.get_player(max_votes[0])
         else:
-            voted_out = voted_out_candidates[0]
+            eliminated_player = self.get_player(random.choice(max_votes))
 
-        # Eliminate the player
-        for player in self.players:
-            if player.name == voted_out:
-                player.eliminate()
-                print(f"{player.name} has been eliminated!")
+
+        eliminated_player.eliminate()
+        print(f"{eliminated_player.name} has been eliminated.")
+        
+        
+    def players_with_max_votes(self, votes):
+        if len(votes) == 1:
+            return [votes[0]]
+        vote_count = {}
+        for vote in votes:
+            if vote in vote_count:
+                vote_count[vote] += 1
+            else:
+                vote_count[vote] = 1
+
+        # Find the maximum number of votes
+        max_votes = max(vote_count.values())
+
+        # Find all players with the maximum number of votes
+        return [player for player, count in vote_count.items() if count == max_votes]
+
+    
 
     def check_game_status(self):
         """Check if the game should end."""
@@ -98,5 +144,5 @@ class Game:
             self.game_over = True
         elif len(active_players) == 1:
             remaining_player = active_players[0]
-            print(f"Only {remaining_player.name} remains. {'The AI wins!' if remaining_player.is_ai else 'The players lose!'}")
+            print(f"Only {remaining_player.name} remains. {'The AI wins!' if remaining_player.is_ai else 'The humans have been victorious!'}")
             self.game_over = True
