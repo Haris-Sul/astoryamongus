@@ -11,13 +11,12 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 rooms = {}
-current_instruction = "Enter a word used to generate the start of the story"
-# session["current_instruction"] = current_instruction
-keywords = []
+# current_instruction = "Enter a word used to generate the start of the story"
+
 
 # Add this function to app.py
-@socketio.on("start_game")
-def start_game():
+@socketio.on("setup_game")
+def setup_game():
     print("Game started!!!")
     # room is room ID
     room = session.get("room")
@@ -30,6 +29,20 @@ def start_game():
     game = Game(rooms[room]["members"])
     game.assign_aliases()
 
+    # add the game object to the room
+    rooms[room]["game"] = game
+    rooms[room]["keywords"] = []
+
+    print(rooms)
+
+def start_game():
+    room = session.get("room")
+    game = rooms[room]["game"]
+
+    print(rooms[room])
+    # rooms[room]["game"].collect_keywords()
+    # rooms[room]["game"].generate_initial_story()
+    game.generate_initial_story(rooms[room]["keywords"])
 
 
 def generate_unique_room_id(length):
@@ -60,6 +73,7 @@ def index():
         if create != False:
             room = generate_unique_room_id(5)
             rooms[room] = {"members": 0, "messages": []}
+            rooms[room]["current_instruction"] = "Enter a word used to generate the start of the story"
         # Otherwise, you are joining a room. If room does not exist with that ID.
         elif room_id not in rooms:
             return render_template("index.html", error="Room does not exist.", room_id=room_id, user_name=user_name)
@@ -76,7 +90,9 @@ def room():
     room = session.get("room")
     if room is None or session.get("user_name") is None or room not in rooms:
         return redirect(url_for("index"))
-    return render_template("room.html", room_id=room, messages=rooms[room]["messages"], current_instruction=current_instruction)
+    
+    # session["current_instruction"] = current_instruction
+    return render_template("room.html", room_id=room, messages=rooms[room]["messages"], current_instruction=rooms[room]["current_instruction"])
 
 @socketio.on("message")
 def message(data):
@@ -84,22 +100,25 @@ def message(data):
     if room not in rooms:
         return redirect(url_for("index"))
     
-    # current_instruction = session.get("current_instruction","")
-
-    if current_instruction == "Enter a word used to generate the start of the story":
-        keywords.append(data["data"])
+    if rooms[room]["current_instruction"] == "Enter a word used to generate the start of the story":
+        rooms[room]["keywords"].append(data["data"])
         print(f"Keyword added: {data['data']}")
 
-        # session["current_instruction"] = "Enter a sentence to continue the story"
 
-        
-    content = {
-        "name": session.get("user_name"),
-        "message": data["data"]
-    }
-    send(content, to=room)
-    rooms[room]["messages"].append(content)
-    print(f"{session.get('user_name')} said: {data['data']}")
+        if len(rooms[room]["keywords"]) == rooms[room]["members"]:
+            rooms[room]["current_instruction"] = "Enter a sentence to continue the story"
+            # session["current_instruction"] = current_instruction
+            start_game()
+
+    elif rooms[room]["current_instruction"] == "Enter a sentence to continue the story":
+
+        content = {
+            "name": session.get("user_name"),
+            "message": data["data"]
+        }
+        send(content, to=room)
+        rooms[room]["messages"].append(content)
+        print(f"{session.get('user_name')} said: {data['data']}")
 
 @socketio.on("connect")
 def connect(auth):

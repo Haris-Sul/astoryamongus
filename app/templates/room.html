@@ -24,7 +24,7 @@
     <h1>{{room_id}}</h1>
     <button type="button" name="copy" id="copy-button" onClick="navigator.clipboard.writeText('{{room_id}}')">Copy</button>
 
-    <button type="button" name="start" id="start-button" onClick="startGame()">Start Game</button>
+    <button type="button" name="start" id="start-button" onClick="setup_game()">Start Game</button>
     <button type="button" name="leave" id="leave-button" onClick="window.location.href='/'">Leave Room</button>
 </aside>
 <script type="text/javascript">
@@ -64,8 +64,8 @@
         message.value = "";
     };
 
-    const startGame = () => {
-        socket_io.emit("start_game");
+    const setup_game = () => {
+        socket_io.emit("setup_game");
     };
     
 </script>
