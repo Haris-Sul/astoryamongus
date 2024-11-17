@@ -39,6 +39,8 @@
         </div>
     </aside>
 
+
+
     <section id="game-box" class="game-box">
         <!-- Initial prompt goes in this h1 tag -->
         <h1 class="game-prompt"></h1>
@@ -93,6 +95,22 @@
         messages.innerHTML += content;
     };
 
+
+
+    socket_io.on("your_turn", () => {
+      // const instruction = data.current_instruction;
+      // console.log(instruction);
+      document.getElementById("current-instruction").innerText = "Its your turn! ";
+      document.getElementById("instruction-container").style.display = "block";
+      console.log("YOUR TURN!");
+  });
+
+  socket_io.on("not_your_turn", () => {
+      document.getElementById("instruction-container").style.display = "none";
+      console.log("NOPE!");
+  });
+
+
     socket_io.on("update_instruction", (data) => {
       // const instruction = data.current_instruction;
       // console.log(instruction);
@@ -111,15 +129,21 @@
         if (message.value == "") return;
 
         const current_instruction = "{{ current_instruction }}";
+        const started = "{{ started }}";
 
-        // check user entered a single word for keyword
-        if (
-            current_instruction ===
-            "Enter a word used to generate the start of the story"
-        ) {
-            const wordCount = message.value.trim().split(/\s+/).length;
-            if (wordCount !== 1) return;
+        // check if game has started
+        if (started === "false"){
+            // check user entered a single word for keyword
+            if (
+                current_instruction ===
+                "Enter a word used to generate the start of the story"
+            ) {
+                const wordCount = message.value.trim().split(/\s+/).length;
+                if (wordCount !== 1) return;
+            }
+            
         }
+
 
         socket_io.emit("message", { data: message.value });
         message.value = "";

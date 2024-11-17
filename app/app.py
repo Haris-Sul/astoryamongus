@@ -40,11 +40,10 @@ def setup_game():
 
 def start_game():
     room = session.get("room")
+    rooms[room]["started"] = True
     game = rooms[room]["game"]
 
     print(rooms[room])
-    # rooms[room]["game"].collect_keywords()
-    # rooms[room]["game"].generate_initial_story()
     game.generate_initial_story(rooms[room]["keywords"])
 
     content = {
@@ -52,6 +51,27 @@ def start_game():
         "message": game.story.story_text
     }
     send(content, to=room)
+    # enable the first  player to take their turn
+    # check if this player is the current player
+    print(game.players[game.current_player].name)
+    print(game.players[game.current_player].is_ai)
+
+    if game.players[game.current_player].is_ai:
+
+        content = {
+        "name": "Story",
+        "message": game.ai_turn()
+        }
+        send(content, to=room)
+
+    print(game.current_player)
+    if game.current_player == session["id"]:
+        socketio.emit("your_turn", to=room)
+    # else:
+    #     # if so, emit a message to the room to let them know it is their turn
+    #     # socketio.emit("not_your_turn", {"current_instruction": rooms[room]["current_instruction"]}, to=room
+    #     socketio.emit("not_your_turn", to=room)
+
 
 
 
@@ -143,7 +163,9 @@ def connect(auth):
     
     join_room(room)
     send({"name": user_name, "message": "has entered the room."}, to=room)
+    session["id"] = rooms[room]["members"] #0 based matches index in game object
     rooms[room]["members"] += 1
+    rooms[room]["started"] = False
     print(f"{user_name} joined room {room}")
     
 @socketio.on("disconnect")
