@@ -44,6 +44,13 @@ def start_game():
     # rooms[room]["game"].generate_initial_story()
     game.generate_initial_story(rooms[room]["keywords"])
 
+    content = {
+        "name": "Story",
+        "message": game.story.story_text
+    }
+    send(content, to=room)
+
+
 
 def generate_unique_room_id(length):
     characters = string.ascii_letters + string.digits
