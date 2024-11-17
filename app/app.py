@@ -11,6 +11,9 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 rooms = {}
+current_instruction = "Enter a word used to generate the start of the story"
+# session["current_instruction"] = current_instruction
+keywords = []
 
 # Add this function to app.py
 @socketio.on("start_game")
@@ -25,6 +28,7 @@ def start_game():
 
     # create a new game object
     game = Game(rooms[room]["members"])
+    game.assign_aliases()
 
 
 
@@ -72,14 +76,23 @@ def room():
     room = session.get("room")
     if room is None or session.get("user_name") is None or room not in rooms:
         return redirect(url_for("index"))
-    return render_template("room.html", room_id=room, messages=rooms[room]["messages"])
+    return render_template("room.html", room_id=room, messages=rooms[room]["messages"], current_instruction=current_instruction)
 
 @socketio.on("message")
 def message(data):
     room = session.get("room")
     if room not in rooms:
-        return
+        return redirect(url_for("index"))
     
+    # current_instruction = session.get("current_instruction","")
+
+    if current_instruction == "Enter a word used to generate the start of the story":
+        keywords.append(data["data"])
+        print(f"Keyword added: {data['data']}")
+
+        # session["current_instruction"] = "Enter a sentence to continue the story"
+
+        
     content = {
         "name": session.get("user_name"),
         "message": data["data"]

@@ -7,8 +7,14 @@
     
     <div class="messages-container" id="messages-container"></div>
     <div>
-        <input type="text" rows="3" placeholder="Message" name="message" id="message"/>
-        <button type="button" name="send" id="send-button" onClick="sendMessage()">Send</button>
+        <!-- if current instruction is not empty string display input and button  -->
+        {% if current_instruction == "Enter a word used to generate the start of the story" %}
+        <p>{{current_instruction}}</p>
+        <input type="text" rows="3" placeholder="Start Typing" name="message" id="message"/>
+        <button type="button" name="send" id="send-button" onClick="sendMessage()">Submit</button>
+        {% elif current_instruction == "test" %}
+        <!-- <input type="text" rows="3" placeholder="TEST" name="message" id="message" value="test"/> -->
+        {% endif %}
     </div>
 </section>
 <!-- List of user names on the side of the page -->
@@ -42,8 +48,18 @@
     });
 
     const sendMessage = () => {
+        //$ add different cases
         const message = document.getElementById("message");
         if (message.value == "") return;
+        
+        const current_instruction = "{{ current_instruction }}";
+
+        // check user entered a single word for keyword
+        if (current_instruction === "Enter a word used to generate the start of the story") {
+            const wordCount = message.value.trim().split(/\s+/).length;
+            if (wordCount !== 1) return;
+        }
+        
         socket_io.emit("message", { data: message.value });
         message.value = "";
     };
