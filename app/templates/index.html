@@ -1,32 +1,42 @@
 {% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
-<header>
-    <h1>A Story Among Us</h1>
+<header class="header">
+    <h1 class="header-title">A Story Among Us</h1>
 </header>
-<main>
-    <h2>Create or Join a Room</h2>
-    <form method="post">
-        <input
-            type="text"
-            placeholder="Type user name here..."
-            name="user_name"
-            value="{{user_name}}"
-        />
-        <button type="submit" name="create">Create Room</button>
-        <input
-            type="text"
-            placeholder="Type room ID here..."
-            name="room_id"
-            value="{{room_id}}"
-        />
-        <button type="submit" name="join">Join Room</button>
-    </form>
-</main>
-{% if error %}
-    <ul>
-        <li>{{error}}</li>
+<main class="main-content">
+    <h2 class="main-title">Create or Join a Room</h2>
+        <form method="post" class="game-form">
+                <div class="create-container">
+                    <input
+                        type="text"
+                        placeholder="Type user name here..."
+                        name="user_name"
+                        value="{{user_name}}"
+                        class="input-field"
+                    />
+                    <button type="submit" name="create" class="btn">
+                        Create Room
+                    </button>
+                </div>
+                <div class="join-container">
+                    <input
+                        type="text"
+                        placeholder="Type room ID here..."
+                        name="room_id"
+                        value="{{room_id}}"
+                        class="input-field"
+                    />
+
+                    <button type="submit" name="join" class="btn">Join Room</button>
+                </div>
+        </form>
+    </div>
+    {% if error %}
+    <ul class="error-list">
+        <li class="error-item">{{error}}</li>
     </ul>
-{% endif %}
-<footer>
-  <p>&copy; 2024 HackSheffield 9</p>
+    {% endif %}
+</main>
+<footer class="footer">
+    <p>&copy; 2024 A Story Among Us, HackSheffield 9</p>
 </footer>
 {% endblock %}
