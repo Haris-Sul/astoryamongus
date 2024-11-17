@@ -15,6 +15,7 @@ class Game:
         self.story = Story()
         self.keywords = []
         self.rounds = 0
+        self.current_player = 0
         self.game_over = False
 
 

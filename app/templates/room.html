@@ -23,7 +23,7 @@
                 name="start"
                 id="start-button"
                 class="btn"
-                onClick="startGame()"
+                onClick="setup_game()"
             >
                 Start Game
             </button>
@@ -43,7 +43,8 @@
         <!-- Initial prompt goes in this h1 tag -->
         <h1 class="game-prompt"></h1>
         <div class="messages-container" id="messages-container"></div>
-        <div class="input-container">
+        <div style="display: none;" id="instruction-container" class="input-container">
+            <p id="current-instruction">{{current_instruction}}</p>
             <input
                 type="text"
                 rows="1"
@@ -75,6 +76,7 @@
             }
         });
 </script>
+
 <script type="text/javascript">
     var socket_io = io();
 
@@ -90,6 +92,14 @@
         `;
         messages.innerHTML += content;
     };
+
+    socket_io.on("update_instruction", (data) => {
+      // const instruction = data.current_instruction;
+      // console.log(instruction);
+      // document.getElementById("current-instruction").innerText = instruction;
+      document.getElementById("instruction-container").style.display = "block";
+      console.log("TEST!");
+  });
 
     socket_io.on("message", (data) => {
         createMessage(data.name, data.message);

@@ -11,7 +11,6 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 rooms = {}
-# current_instruction = "Enter a word used to generate the start of the story"
 
 
 # Add this function to app.py
@@ -29,11 +28,15 @@ def setup_game():
     game = Game(rooms[room]["members"])
     game.assign_aliases()
 
-    # add the game object to the room
+    # add the data to the room
+    rooms[room]["current_instruction"] = "Enter a word used to generate the start of the story"
     rooms[room]["game"] = game
     rooms[room]["keywords"] = []
-
+    
+    
+    socketio.emit("update_instruction", {"current_instruction": rooms[room]["current_instruction"]}, to=room)
     print(rooms)
+    
 
 def start_game():
     room = session.get("room")
@@ -83,7 +86,7 @@ def index():
             rooms[room]["current_instruction"] = "Enter a word used to generate the start of the story"
         # Otherwise, you are joining a room. If room does not exist with that ID.
         elif room_id not in rooms:
-            return render_template("index.html", error="Room does not exist.", room_id=room_id, user_name=user_name)
+            return render_template("index.html", error="Room does not exist.", room_id=room_id, user_name=user_name, current_instruction=rooms[room]["current_instruction"])
             
         session["room"] = room
         session["user_name"] = user_name
