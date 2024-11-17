@@ -104,7 +104,7 @@ h2 {
     flex: 1;
 }
 
-.user-list {
+aside {
     position: fixed;
     left: 0;
     top: 0;
