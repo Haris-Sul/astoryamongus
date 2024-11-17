@@ -12,9 +12,14 @@
     </div>
 </section>
 <!-- List of user names on the side of the page -->
-<aside>
+<aside class="col">
+
     <h1>Room Code:</h1>
     <h1>{{room_id}}</h1>
+    <button type="button" name="copy" id="copy-button" onClick="navigator.clipboard.writeText('{{room_id}}')">Copy</button>
+
+    <button type="button" name="start" id="start-button" onClick="startGame()">Start Game</button>
+    <button type="button" name="leave" id="leave-button" onClick="window.location.href='/'">Leave Room</button>
 </aside>
 <script type="text/javascript">
     var socket_io = io();
@@ -42,6 +47,11 @@
         socket_io.emit("message", { data: message.value });
         message.value = "";
     };
+
+    const startGame = () => {
+        socket_io.emit("start_game");
+    };
+    
 </script>
 {% for msg in messages %}
 <script type="text/javascript">

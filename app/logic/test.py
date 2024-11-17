@@ -1,4 +1,4 @@
-from game import Game
+from game_text import Game
 
 if __name__ == "__main__":
     num_players = int(input("Enter the number of players (including AI): "))

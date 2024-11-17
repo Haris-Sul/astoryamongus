@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import join_room, leave_room, send, SocketIO
 import secrets
 import string
+from logic.game import Game
+
 
 app = Flask(__name__)
 app.debug = True
@@ -9,6 +11,22 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 rooms = {}
+
+# Add this function to app.py
+@socketio.on("start_game")
+def start_game():
+    print("Game started!!!")
+    # room is room ID
+    room = session.get("room")
+    
+    # Logic to start the game
+    send({"name": "System", "message": "The game has started!"}, to=room)
+    print(f"Game started in room {room}")
+
+    # create a new game object
+    game = Game(rooms[room]["members"])
+
+
 
 def generate_unique_room_id(length):
     characters = string.ascii_letters + string.digits
